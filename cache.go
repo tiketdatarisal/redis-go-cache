@@ -7,8 +7,11 @@ import (
 	"time"
 )
 
+const DefaultSeparator = ":"
+
 var (
 	NotInitializedError = fmt.Errorf("cache was not initialized")
+	Separator = DefaultSeparator
 )
 
 type Cache struct {
@@ -72,7 +75,7 @@ func (c *Cache) Get(key string, namespace ...string) (interface{}, error) {
 
 	ns := key
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	if value, err := r.Do("GET", ns); err != nil {
@@ -109,7 +112,7 @@ func (c *Cache) Set(key string, value interface{}, namespace ...string) error {
 
 	ns := key
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	if _, err := r.Do("SET", ns, value); err != nil {
@@ -129,7 +132,7 @@ func (c *Cache) SetEx(key string, value interface{}, duration time.Duration, nam
 
 	ns := key
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	if _, err := r.Do("SETEX", ns, int(duration/time.Second), value); err != nil {
@@ -149,7 +152,7 @@ func (c *Cache) Exists(key string, namespace ...string) (bool, error) {
 
 	ns := key
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	if 	ok, err := redis.Bool(r.Do("EXISTS", ns)); err != nil {
@@ -169,7 +172,7 @@ func (c *Cache) Delete(key string, namespace ...string) error {
 
 	ns := key
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	if _, err := r.Do("DEL", ns); err != nil {
@@ -195,7 +198,7 @@ func (c *Cache) Clear(pattern string, namespace ...string) error {
 
 	ns := pattern
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	for {
@@ -244,7 +247,7 @@ func (c *Cache) GetKeys(pattern string, namespace ...string) ([]string, error) {
 
 	ns := pattern
 	if len(namespace) > 0 {
-		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, ":"), ns)
+		ns = fmt.Sprintf("%s:%s", strings.Join(namespace, Separator), ns)
 	}
 
 	var keys []string
