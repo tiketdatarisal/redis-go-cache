@@ -23,11 +23,11 @@ func NewCache(host string, cred ...string) *Cache {
 		MaxIdle:   5,
 		Wait:      true,
 		Dial: func() (redis.Conn, error) {
-			if len(cred) >= 2 {
+			if len(cred) >= 2 && cred[0] != "" && cred[1] != "" {
 				return redis.Dial("tcp", host,
 					redis.DialUsername(cred[0]),
 					redis.DialPassword(cred[1]))
-			} else if len(cred) == 1 {
+			} else if len(cred) == 1 && cred[0] != "" {
 				return redis.Dial("tcp", host,
 					redis.DialPassword(cred[0]))
 			} else {
